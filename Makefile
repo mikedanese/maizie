@@ -6,32 +6,18 @@ CDEBUG = -g -Wall
 CXXDEBUG = -g -Wall
 
 CSTD = -std=c99
-CXXSTD = -std=c++11
+CXXSTD = -std=c++14
 
-CFLAGS = -O0  $(CDEBUG) $(CSTD)
-CXXFLAGS = -O0  $(CXXDEBUG) $(CXXSTD)
+CFLAGS = -Og  $(CDEBUG) $(CSTD)
+CXXFLAGS = -Og  $(CXXDEBUG) $(CXXSTD)
 
-OBJS := serp_parse.o serp_lex.o
+OBJS :=
 
-CLEANLIST = **/*.o \
-	location.hh \
-	serp_parse.hh \
-	serp_parse.output \
-	position.hh \
-	stack.hh \
-	serp_parse.cc \
-	serp_lex.cc \
-	serp
+CLEANLIST := maizie
 
 
-serp: cmd.cc $(OBJS) *.h
+maizie: vm.cc $(OBJS)
 	$(CXX) $(CXXFLAGS) $< -o $@ $(OBJS)
-
-serp_parse.cc serp_parse.hh: serp.yy
-	bison -d -v $< -o $@
-
-serp_lex.cc: serp.l serp_parse.hh
-	flex --outfile=$@  $<
 
 %.o: %.c
 	$(CXX)  $(CXXFLAGS) -c $< -o $@
@@ -41,9 +27,9 @@ clean:
 	rm -rf $(CLEANLIST)
 
 fmt: *.cc *.h
-	clang-format-3.7 $? -i
+	clang-format-3.8 $? -i
 .PHONY += fmt
 
-test: serp
-	./$< < test.srp
+test: maizie
+	./$<
 .PHONY += test
